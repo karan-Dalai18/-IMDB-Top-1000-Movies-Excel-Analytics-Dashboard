@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMDB Top 1000 Movies — Dashboard Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C518;
+    --gold-dim: #c9a10e;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #1a1a1a;
+    --card2: #222222;
+    --border: rgba(245,197,24,0.15);
+    --text: #e8e8e8;
+    --muted: #888;
+    --accent: #e85d04;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 60px 24px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(245,197,24,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 80%, rgba(232,93,4,0.08) 0%, transparent 50%);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 140px);
+    letter-spacing: 4px;
+    line-height: 0.9;
+    color: #fff;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .hero-title span { color: var(--gold); }
+
+  .hero-sub {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--muted);
+    margin-top: 18px;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 52px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .hero-stat { text-align: center; }
+  .hero-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    display: block;
+    line-height: 1;
+  }
+  .hero-stat .lbl {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .divider {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+    align-self: center;
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 24px; max-width: 1200px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 40px;
+  }
+
+  /* ── KPI GRID ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 64px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+  }
+
+  .kpi-icon { font-size: 24px; margin-bottom: 12px; }
+  .kpi-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .kpi-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── SNAPSHOT CARDS ── */
+  .snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  .snap-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .snap-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(245,197,24,0.4);
+  }
+
+  .snap-header {
+    background: var(--card2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .snap-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .d1 { background: #ff5f57; }
+  .d2 { background: #febc2e; }
+  .d3 { background: #28c840; }
+
+  .snap-title { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 8px; letter-spacing: 0.5px; }
+
+  .snap-body {
+    padding: 24px 20px;
+    min-height: 220px;
+  }
+
+  /* ── CHART VISUALS ── */
+  /* Genre Bar Chart */
+  .chart-title {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-name { font-size: 12px; color: var(--muted); width: 72px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: rgba(255,255,255,0.05); height: 22px; border-radius: 2px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+    animation: growBar 1s ease both;
+  }
+  .bar-fill span { font-size: 11px; font-weight: 600; color: var(--black); }
+
+  @keyframes growBar { from { width: 0 !important; } }
+
+  /* Rating Dist */
+  .rating-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 140px;
+    padding-bottom: 24px;
+    position: relative;
+  }
+  .rating-bars::after {
+    content: '';
+    position: absolute;
+    bottom: 24px; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .r-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .r-bar {
+    width: 100%;
+    background: linear-gradient(to top, var(--accent), #ff8c42);
+    border-radius: 2px 2px 0 0;
+    animation: growUp 0.8s ease both;
+    position: relative;
+  }
+  @keyframes growUp { from { height: 0 !important; transform: scaleY(0); } }
+  .r-label { font-size: 9px; color: var(--muted); text-align: center; }
+
+  /* Decade timeline */
+  .decade-list { list-style: none; }
+  .decade-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .decade-yr { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); width: 44px; flex-shrink: 0; }
+  .decade-bar-track { flex: 1; background: rgba(255,255,255,0.05); height: 16px; border-radius: 2px; overflow: hidden; }
+  .decade-bar { height: 100%; background: linear-gradient(90deg, rgba(245,197,24,0.4), var(--gold)); border-radius: 2px; animation: growBar 0.8s ease both; }
+  .decade-cnt { font-size: 12px; color: var(--muted); width: 32px; text-align: right; flex-shrink: 0; }
+
+  /* Top movies table */
+  .movie-table { width: 100%; border-collapse: collapse; }
+  .movie-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .movie-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .movie-table tr:last-child td { border-bottom: none; }
+  .rating-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(245,197,24,0.15);
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    gap: 3px;
+  }
+  .rank-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* Director leaderboard */
+  .director-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .director-row:last-child { border-bottom: none; }
+  .dir-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: rgba(255,255,255,0.15);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .dir-info { flex: 1; }
+  .dir-name { font-size: 14px; font-weight: 500; }
+  .dir-count { font-size: 11px; color: var(--muted); }
+  .dir-bar-track { width: 80px; background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; overflow: hidden; }
+  .dir-bar { height: 100%; background: var(--gold); border-radius: 2px; animation: growBar 0.8s ease both; }
+
+  /* Financial */
+  .fin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .fin-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+  }
+  .fin-box.accent { border-color: rgba(245,197,24,0.4); background: rgba(245,197,24,0.05); }
+  .fin-box-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .fin-box-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); }
+  .fin-box-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Certificates pie-ish */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .cert-box {
+    background: var(--card2);
+    border-radius: 6px;
+    padding: 14px 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .cert-code {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: #fff;
+  }
+  .cert-pct { font-size: 18px; font-weight: 600; color: var(--gold); }
+  .cert-cnt { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* Scatter hint */
+  .scatter-hint {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scatter-dot-row { display: flex; gap: 6px; align-items: center; }
+  .sdot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .scatter-label { font-size: 12px; color: var(--muted); }
+
+  .corr-badge {
+    display: inline-block;
+    background: rgba(245,197,24,0.12);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 16px 20px;
+    text-align: center;
+    margin-top: 16px;
+    width: 100%;
+  }
+  .corr-badge .cv { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); line-height: 1; }
+  .corr-badge .cl { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* ── SHEETS TABLE ── */
+  .sheets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .sheet-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .sheet-card:hover { border-color: rgba(245,197,24,0.4); }
+  .sheet-icon { font-size: 28px; flex-shrink: 0; }
+  .sheet-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .sheet-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── INSIGHTS ── */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  .insight-emoji { font-size: 32px; margin-bottom: 12px; }
+  .insight-heading { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .insight-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── POST COPY ── */
+  .copy-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .copy-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .copy-tab {
+    padding: 12px 28px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    margin-bottom: -1px;
+  }
+
+  .copy-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .copy-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 32px;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    font-family: 'DM Sans', sans-serif;
+    color: #ccc;
+    display: none;
+    position: relative;
+  }
+
+  .copy-box.active { display: block; }
+
+  .copy-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(245,197,24,0.15);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .copy-btn:hover { background: rgba(245,197,24,0.3); }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center;
+    padding: 60px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .page-footer strong { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── SEPARATOR ── */
+  .full-sep {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  .highlight { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">📊 Excel Dashboard Project</div>
+  <h1 class="hero-title">IMDB<br><span>Top 1000</span><br>Movies</h1>
+  <p class="hero-sub">A multi-sheet Excel analytics dashboard for 673 films</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="num">673</span>
+      <span class="lbl">Movies Analyzed</span>
+    </div>
+    <div class="divider"></div>
+    <div class="hero-stat">
+      <span class="num">7.94</span>
+      <span class="lbl">Avg IMDB Rating</span>
+    </div>
+    <div class="divider"></div>
+    <div class="hero-stat">
+      <span class="num">$54B</span>
+      <span class="lbl">Total Gross Revenue</span>
+    </div>
+    <div class="divider"></div>
+    <div class="hero-stat">
+      <span class="num">7</span>
+      <span class="lbl">Dashboard Sheets</span>
+    </div>
+  </div>
+</div>
+
+<div class="full-sep"></div>
+
+<!-- DASHBOARD SHEETS OVERVIEW -->
+<section>
+  <div class="section-label">Structure</div>
+  <div class="section-title">Dashboard Sheets</div>
+
+  <div class="sheets-grid">
+    <div class="sheet-card">
+      <span class="sheet-icon">📊</span>
+      <div>
+        <div class="sheet-name">Overview Dashboard</div>
+        <div class="sheet-desc">Top-level KPIs: total movies, average rating, total gross revenue, average runtime — plus genre/rating charts.</div>
+      </div>
+    </div>
+    <div class="sheet-card">
+      <span class="sheet-icon">💰</span>
+      <div>
+        <div class="sheet-name">Financial Dashboard</div>
+        <div class="sheet-desc">Highest & lowest gross, correlation insights, $100M+ club, best genres by revenue, and financial trend charts.</div>
+      </div>
+    </div>
+    <div class="sheet-card">
+      <span class="sheet-icon">🔍</span>
+      <div>
+        <div class="sheet-name">Deep Dive Analysis</div>
+        <div class="sheet-desc">Unique directors, star counts, average votes, Meta Score distribution, runtime breakdown by certificate.</div>
+      </div>
+    </div>
+    <div class="sheet-card">
+      <span class="sheet-icon">🎛️</span>
+      <div>
+        <div class="sheet-name">Interactive Controls</div>
+        <div class="sheet-desc">Dynamic movie lookup — select any film to see full details. Director stats panel with aggregated metrics.</div>
+      </div>
+    </div>
+    <div class="sheet-card">
+      <span class="sheet-icon">📋</span>
+      <div>
+        <div class="sheet-name">Raw Data</div>
+        <div class="sheet-desc">673 movies with 16 fields: Title, Year, Certificate, Runtime, Genre, Ratings, Director, 4 Stars, Votes, Gross.</div>
+      </div>
+    </div>
+    <div class="sheet-card">
+      <span class="sheet-icon">⚙️</span>
+      <div>
+        <div class="sheet-name">Helper & Scatter Data</div>
+        <div class="sheet-desc">Pre-aggregated genre, rating, and year distributions powering the charts. Rating vs Meta Score scatter dataset.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="full-sep"></div>
+
+<!-- KPI SNAPSHOT -->
+<section>
+  <div class="section-label">Dashboard Snapshot</div>
+  <div class="section-title">Key Metrics</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon">🎬</div>
+      <div class="kpi-value">673</div>
+      <div class="kpi-label">Total Movies</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⭐</div>
+      <div class="kpi-value">7.94</div>
+      <div class="kpi-label">Avg IMDB Rating</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">💵</div>
+      <div class="kpi-value">$53.97B</div>
+      <div class="kpi-label">Total Gross Revenue</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⏱️</div>
+      <div class="kpi-value">124 min</div>
+      <div class="kpi-label">Avg Runtime</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🎥</div>
+      <div class="kpi-value">$80.19M</div>
+      <div class="kpi-label">Avg Gross per Film</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🏆</div>
+      <div class="kpi-value">182</div>
+      <div class="kpi-label">$100M+ Movies</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🎭</div>
+      <div class="kpi-value">100</div>
+      <div class="kpi-label">Max Meta Score</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-value">1930–2019</div>
+      <div class="kpi-label">Year Span</div>
+    </div>
+  </div>
+</section>
+
+<div class="full-sep"></div>
+
+<!-- CHART SNAPSHOTS -->
+<section>
+  <div class="section-label">Visual Snapshots</div>
+  <div class="section-title">Charts & Analysis</div>
+
+  <div class="snapshot-grid">
+
+    <!-- Genre Distribution -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Genre Distribution — Overview Dashboard</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Movies by Primary Genre</div>
+        <div class="bar-row"><span class="bar-name">Drama</span><div class="bar-track"><div class="bar-fill" style="width:92%"><span>176</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Action</span><div class="bar-track"><div class="bar-fill" style="width:63%" ><span>121</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Comedy</span><div class="bar-track"><div class="bar-fill" style="width:52%" ><span>101</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Biography</span><div class="bar-track"><div class="bar-fill" style="width:37%"><span>71</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Crime</span><div class="bar-track"><div class="bar-fill" style="width:36%" ><span>70</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Adventure</span><div class="bar-track"><div class="bar-fill" style="width:30%"><span>58</span></div></div></div>
+        <div class="bar-row"><span class="bar-name">Animation</span><div class="bar-track"><div class="bar-fill" style="width:30%"><span>58</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- Rating Distribution -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Rating Distribution — Overview Dashboard</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Movies by IMDB Rating Range</div>
+        <div class="rating-bars">
+          <div class="r-col"><div class="r-bar" style="height:130px"></div><div class="r-label">7.5–7.8<br><strong style="color:#fff">315</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:78px"></div><div class="r-label">7.8–8.0<br><strong style="color:#fff">166</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:45px"></div><div class="r-label">8.0–8.2<br><strong style="color:#fff">96</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:24px"></div><div class="r-label">8.2–8.4<br><strong style="color:#fff">51</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:13px"></div><div class="r-label">8.4–8.6<br><strong style="color:#fff">27</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:5px"></div><div class="r-label">8.6–8.8<br><strong style="color:#fff">10</strong></div></div>
+          <div class="r-col"><div class="r-bar" style="height:3px"></div><div class="r-label">8.8–9.5<br><strong style="color:#fff">8</strong></div></div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px">Most films cluster between 7.5–8.0 — the IMDB sweet spot for top-listed movies.</p>
+      </div>
+    </div>
+
+    <!-- Top 5 Rated Movies -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Top Rated — Overview Dashboard</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Highest IMDB Rated Movies</div>
+        <table class="movie-table">
+          <thead><tr><th>#</th><th>Movie</th><th>Rating</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank-num">1</span></td><td>The Shawshank Redemption</td><td><span class="rating-badge">⭐ 9.3</span></td></tr>
+            <tr><td><span class="rank-num">2</span></td><td>The Godfather</td><td><span class="rating-badge">⭐ 9.2</span></td></tr>
+            <tr><td><span class="rank-num">3</span></td><td>The Dark Knight</td><td><span class="rating-badge">⭐ 9.0</span></td></tr>
+            <tr><td><span class="rank-num">4</span></td><td>The Godfather: Part II</td><td><span class="rating-badge">⭐ 9.0</span></td></tr>
+            <tr><td><span class="rank-num">5</span></td><td>12 Angry Men</td><td><span class="rating-badge">⭐ 9.0</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Grossing -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Financial Dashboard — Highest Grossing</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Top 5 Box Office Earners</div>
+        <table class="movie-table">
+          <thead><tr><th>#</th><th>Movie</th><th>Gross</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank-num">1</span></td><td>Star Wars: Ep. VII</td><td style="color:var(--gold);font-weight:600">$936M</td></tr>
+            <tr><td><span class="rank-num">2</span></td><td>Avengers: Endgame</td><td style="color:var(--gold);font-weight:600">$858M</td></tr>
+            <tr><td><span class="rank-num">3</span></td><td>Avatar</td><td style="color:var(--gold);font-weight:600">$760M</td></tr>
+            <tr><td><span class="rank-num">4</span></td><td>Avengers: Infinity War</td><td style="color:var(--gold);font-weight:600">$678M</td></tr>
+            <tr><td><span class="rank-num">5</span></td><td>Titanic</td><td style="color:var(--gold);font-weight:600">$659M</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Financial KPIs -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Financial Dashboard — KPI Cards</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Revenue Insights</div>
+        <div class="fin-grid">
+          <div class="fin-box accent">
+            <div class="fin-box-title">Highest Gross</div>
+            <div class="fin-box-val">$936M</div>
+            <div class="fin-box-sub">Star Wars Ep. VII</div>
+          </div>
+          <div class="fin-box">
+            <div class="fin-box-title">Total Gross</div>
+            <div class="fin-box-val">$53.97B</div>
+            <div class="fin-box-sub">All 673 movies</div>
+          </div>
+          <div class="fin-box">
+            <div class="fin-box-title">Avg Gross</div>
+            <div class="fin-box-val">$80.19M</div>
+            <div class="fin-box-sub">Per film</div>
+          </div>
+          <div class="fin-box">
+            <div class="fin-box-title">Action Genre Avg</div>
+            <div class="fin-box-val">$160M</div>
+            <div class="fin-box-sub">Best by genre</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating vs Meta Score -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Financial Dashboard — Correlation</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">IMDB Rating vs Meta Score</div>
+        <div class="corr-badge">
+          <div class="cv">0.118</div>
+          <div class="cl">Correlation Coefficient</div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6">
+          Weak positive correlation between IMDB user ratings and critical Meta Scores — audiences and critics often disagree. Action movies grossing $160M avg vs Drama at $48M avg highlights the commercial gap.
+        </p>
+      </div>
+    </div>
+
+    <!-- Directors Leaderboard -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Deep Dive — Top Directors</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Most Films in Top 1000</div>
+        <div class="director-row">
+          <span class="dir-rank">1</span>
+          <div class="dir-info"><div class="dir-name">Steven Spielberg</div><div class="dir-count">13 films</div></div>
+          <div class="dir-bar-track"><div class="dir-bar" style="width:100%"></div></div>
+        </div>
+        <div class="director-row">
+          <span class="dir-rank">2</span>
+          <div class="dir-info"><div class="dir-name">Martin Scorsese</div><div class="dir-count">10 films</div></div>
+          <div class="dir-bar-track"><div class="dir-bar" style="width:77%"></div></div>
+        </div>
+        <div class="director-row">
+          <span class="dir-rank">3</span>
+          <div class="dir-info"><div class="dir-name">David Fincher</div><div class="dir-count">8 films</div></div>
+          <div class="dir-bar-track"><div class="dir-bar" style="width:62%"></div></div>
+        </div>
+        <div class="director-row">
+          <span class="dir-rank">3</span>
+          <div class="dir-info"><div class="dir-name">Clint Eastwood</div><div class="dir-count">8 films</div></div>
+          <div class="dir-bar-track"><div class="dir-bar" style="width:62%"></div></div>
+        </div>
+        <div class="director-row">
+          <span class="dir-rank">3</span>
+          <div class="dir-info"><div class="dir-name">Christopher Nolan</div><div class="dir-count">8 films</div></div>
+          <div class="dir-bar-track"><div class="dir-bar" style="width:62%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decade Timeline -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Deep Dive — Movies by Decade</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Production Volume Over Time</div>
+        <ul class="decade-list">
+          <li class="decade-item"><span class="decade-yr">1930s</span><div class="decade-bar-track"><div class="decade-bar" style="width:5%"></div></div><span class="decade-cnt">9</span></li>
+          <li class="decade-item"><span class="decade-yr">1940s</span><div class="decade-bar-track"><div class="decade-bar" style="width:4%"></div></div><span class="decade-cnt">7</span></li>
+          <li class="decade-item"><span class="decade-yr">1950s</span><div class="decade-bar-track"><div class="decade-bar" style="width:10%"></div></div><span class="decade-cnt">20</span></li>
+          <li class="decade-item"><span class="decade-yr">1960s</span><div class="decade-bar-track"><div class="decade-bar" style="width:16%"></div></div><span class="decade-cnt">30</span></li>
+          <li class="decade-item"><span class="decade-yr">1970s</span><div class="decade-bar-track"><div class="decade-bar" style="width:24%"></div></div><span class="decade-cnt">47</span></li>
+          <li class="decade-item"><span class="decade-yr">1980s</span><div class="decade-bar-track"><div class="decade-bar" style="width:38%"></div></div><span class="decade-cnt">73</span></li>
+          <li class="decade-item"><span class="decade-yr">1990s</span><div class="decade-bar-track"><div class="decade-bar" style="width:61%"></div></div><span class="decade-cnt">118</span></li>
+          <li class="decade-item"><span class="decade-yr">2000s</span><div class="decade-bar-track"><div class="decade-bar" style="width:100%"></div></div><span class="decade-cnt">192</span></li>
+          <li class="decade-item"><span class="decade-yr">2010s</span><div class="decade-bar-track"><div class="decade-bar" style="width:91%"></div></div><span class="decade-cnt">176</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Certificate Breakdown -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Deep Dive — Certificate Breakdown</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Movies by Age Certificate</div>
+        <div class="cert-grid">
+          <div class="cert-box"><div class="cert-code">U</div><div class="cert-pct">25.6%</div><div class="cert-cnt">172 films</div></div>
+          <div class="cert-box"><div class="cert-code">A</div><div class="cert-pct">24.7%</div><div class="cert-cnt">166 films</div></div>
+          <div class="cert-box"><div class="cert-code">UA</div><div class="cert-pct">20.2%</div><div class="cert-cnt">136 films</div></div>
+          <div class="cert-box"><div class="cert-code">R</div><div class="cert-pct">17.7%</div><div class="cert-cnt">119 films</div></div>
+          <div class="cert-box"><div class="cert-code">PG-13</div><div class="cert-pct">5.7%</div><div class="cert-cnt">38 films</div></div>
+          <div class="cert-box"><div class="cert-code">PG</div><div class="cert-pct">2.7%</div><div class="cert-cnt">18 films</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Lookup -->
+    <div class="snap-card">
+      <div class="snap-header">
+        <div class="snap-dot d1"></div><div class="snap-dot d2"></div><div class="snap-dot d3"></div>
+        <span class="snap-title">Interactive Controls — Movie Lookup</span>
+      </div>
+      <div class="snap-body">
+        <div class="chart-title">Sample: Ghostbusters (1984)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+          <div style="color:var(--muted)">Year</div><div style="font-weight:500">1984</div>
+          <div style="color:var(--muted)">Certificate</div><div style="font-weight:500">UA</div>
+          <div style="color:var(--muted)">Runtime</div><div style="font-weight:500">105 min</div>
+          <div style="color:var(--muted)">Genre</div><div style="font-weight:500">Action, Comedy, Fantasy</div>
+          <div style="color:var(--muted)">IMDB Rating</div><div><span class="rating-badge">⭐ 7.8</span></div>
+          <div style="color:var(--muted)">Meta Score</div><div style="font-weight:500">71</div>
+          <div style="color:var(--muted)">Director</div><div style="font-weight:500">Ivan Reitman</div>
+          <div style="color:var(--muted)">Stars</div><div style="font-weight:500">Bill Murray, Dan Aykroyd</div>
+          <div style="color:var(--muted)">Votes</div><div style="font-weight:500">355,413</div>
+          <div style="color:var(--muted)">Gross Revenue</div><div style="color:var(--gold);font-weight:600">$238.6M</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-sep"></div>
+
+<!-- KEY INSIGHTS -->
+<section>
+  <div class="section-label">Analysis</div>
+  <div class="section-title">Key Insights</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-emoji">🎬</div>
+      <div class="insight-heading">Drama Dominates Volume</div>
+      <div class="insight-text">Drama is by far the most represented genre with 176 films (26%), but Action leads in average gross revenue at $160M per film vs Drama's $48M.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-emoji">📈</div>
+      <div class="insight-heading">2000s Were the Golden Era</div>
+      <div class="insight-text">The 2000s produced the most top-1000 movies (192), narrowly edging the 2010s (176). Films from the 1990s onward make up 72% of the dataset.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-emoji">🔬</div>
+      <div class="insight-heading">Critics vs Audiences</div>
+      <div class="insight-text">Only a 0.118 correlation between IMDB scores and Meta Scores — critics and audiences measure film quality very differently. High gross ≠ high rating.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-emoji">💎</div>
+      <div class="insight-heading">The $100M Club</div>
+      <div class="insight-text">182 films (27%) crossed the $100M gross mark. Star Wars Ep. VII leads at $936M, with Avengers: Endgame and Avatar close behind.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-emoji">🎯</div>
+      <div class="insight-heading">Spielberg Rules the Count</div>
+      <div class="insight-text">Steven Spielberg appears most frequently with 13 top-1000 films, followed by Scorsese (10), and a three-way tie: Fincher, Eastwood, and Nolan (8 each).</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-emoji">⭐</div>
+      <div class="insight-heading">The Shawshank Effect</div>
+      <div class="insight-text">The Shawshank Redemption leads at 9.3 — a film that was a box-office disappointment on release but became the highest-rated film on IMDB through home media.</div>
+    </div>
+  </div>
+</section>
+
+<div class="full-sep"></div>
+
+<!-- SOCIAL POST COPY -->
+<div class="copy-section">
+  <div class="section-label" style="text-align:center">Ready to Post</div>
+  <div class="section-title" style="text-align:center">Post Copy</div>
+
+  <div class="copy-tabs">
+    <button class="copy-tab active" onclick="switchTab('linkedin')">💼 LinkedIn</button>
+    <button class="copy-tab" onclick="switchTab('github')">🐙 GitHub README</button>
+  </div>
+
+  <div class="copy-box active" id="tab-linkedin">
+    <button class="copy-btn" onclick="copyText('tab-linkedin')">Copy</button>
+🎬 Built an IMDB Top 1000 Movies Dashboard in Excel — here's what the data reveals!
+
+I analyzed 673 top-rated films spanning 1930–2019 and built a fully interactive multi-sheet Excel dashboard with 7 tabs covering everything from genre trends to box office deep dives.
+
+📊 Key Highlights:
+• Total Gross Revenue: $53.97 Billion across all films
+• Avg IMDB Rating: 7.94 — these are truly the best of the best
+• $100M+ Club: 182 films broke the box office barrier
+• Highest Grossing: Star Wars Ep. VII at $936M
+• Top Rated: The Shawshank Redemption at ⭐ 9.3
+
+🔍 Surprising Insights I Found:
+1. Critics vs Audiences: The correlation between IMDB scores and Meta Scores is just 0.118 — critics and audiences wildly disagree
+2. Drama films dominate volume (26% of all films) but Action movies earn 3x more on average ($160M vs $48M)
+3. The 2000s were cinema's most productive decade for quality — 192 films in the top 1000
+4. Steven Spielberg holds the crown with 13 films in the top 1000
+
+🛠️ Dashboard Features:
+→ Overview Dashboard with KPI cards
+→ Financial Dashboard with revenue correlation analysis
+→ Deep Dive analysis by director, star, runtime & certificate
+→ Interactive Movie Lookup — select any film for full details
+→ Dynamic Director Stats panel
+
+Built entirely in Excel using VLOOKUP, COUNTIF, AVERAGEIF, and dynamic data validation — no macros, no Power BI.
+
+What's your favourite film from the IMDB Top 1000? Drop it in the comments 👇
+
+#Excel #DataAnalytics #Dashboard #IMDB #DataVisualization #MovieData #ExcelDashboard #DataAnalysis #PortfolioProject #BusinessIntelligence
+  </div>
+
+  <div class="copy-box" id="tab-github">
+    <button class="copy-btn" onclick="copyText('tab-github')">Copy</button>
+# 🎬 IMDB Top 1000 Movies — Excel Analytics Dashboard
+
+A fully interactive, multi-sheet Excel dashboard analyzing **673 top-rated films** from the IMDB Top 1000 list, spanning **1930–2019**.
+
+---
+
+## 📊 Dashboard Overview
+
+| Sheet | Description |
+|---|---|
+| 📊 Overview Dashboard | KPI cards, genre distribution, rating breakdown |
+| 💰 Financial Dashboard | Revenue analysis, correlation, $100M+ club |
+| 🔍 Deep Dive Analysis | Directors, stars, runtime, certificates |
+| 🎛️ Interactive Controls | Dynamic movie lookup & director stats |
+| 📋 Raw Data | 673 movies × 16 fields |
+| ⚙️ Helper / Scatter Data | Pre-aggregated chart datasets |
+
+---
+
+## 🔢 Key Metrics
+
+| Metric | Value |
+|---|---|
+| Total Movies | 673 |
+| Year Range | 1930 – 2019 |
+| Average IMDB Rating | 7.94 |
+| Total Gross Revenue | $53.97 Billion |
+| Average Gross per Film | $80.19 Million |
+| Movies with $100M+ Gross | 182 |
+| Average Runtime | 124 minutes |
+| Max Meta Score | 100 |
+
+---
+
+## 🏆 Top Films
+
+**Highest Rated:**
+1. The Shawshank Redemption — ⭐ 9.3
+2. The Godfather — ⭐ 9.2
+3. The Dark Knight — ⭐ 9.0
+
+**Highest Grossing:**
+1. Star Wars: Episode VII — $936M
+2. Avengers: Endgame — $858M
+3. Avatar — $760M
+
+---
+
+## 💡 Key Insights
+
+- **Drama** is the most common genre (26%) but **Action** earns 3× more on average ($160M vs $48M)
+- Rating–Gross correlation is only **0.118** — commercial success ≠ critical acclaim
+- The **2000s** produced the most top-1000 films (192)
+- **Steven Spielberg** leads directors with 13 films in the top 1000
+- **182 films (27%)** crossed the $100M gross milestone
+
+---
+
+## 🛠️ Excel Features Used
+
+- `VLOOKUP` / `INDEX-MATCH` for interactive lookups
+- `COUNTIF`, `AVERAGEIF`, `SUMIF` for aggregations
+- `CORREL` for rating–revenue correlation
+- Data Validation dropdowns for interactive controls
+- Conditional Formatting for KPI highlights
+- Named ranges for clean formula references
+
+---
+
+## 📁 Dataset
+
+- **Source:** IMDB Top 1000 Movies dataset
+- **Rows:** 673 films
+- **Columns:** Movie Title, Year, Certificate, Runtime, Genre, IMDB Rating, Meta Score, Director, Stars (×4), No. of Votes, Gross Revenue, Runtime (min), Primary Genre
+
+---
+
+## 🚀 How to Use
+
+1. Download `IMDB_Dashboard.xlsx`
+2. Open in Microsoft Excel (2016+ recommended)
+3. Navigate to **Interactive Controls** sheet
+4. Use the dropdown to select any movie or director
+5. Explore the three dashboard tabs for visual analysis
+
+---
+
+*Built with Microsoft Excel | Dataset: IMDB Top 1000*
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <p>IMDB Top 1000 Movies — Excel Dashboard</p>
+  <p style="margin-top:8px">673 movies · 7 sheets · <strong>$53.97B</strong> total box office · Built in Excel</p>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.copy-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.copy-box').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyText(id) {
+  const box = document.getElementById(id);
+  const text = box.innerText.replace('Copy\n','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = box.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
