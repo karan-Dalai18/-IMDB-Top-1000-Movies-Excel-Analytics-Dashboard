@@ -17,6 +17,10 @@ A fully interactive, multi-sheet Excel dashboard analyzing **673 top-rated films
 
 ---
 
+ ## 📸 Snapshot ##
+ ![overview Dashboard](https://github.com/karan-Dalai18/-IMDB-Top-1000-Movies-Excel-Analytics-Dashboard/blob/main/Screenshot%202026-03-18%20180112.png)
+
+
 ## 🔢 Key Metrics
 
 | Metric | Value |
